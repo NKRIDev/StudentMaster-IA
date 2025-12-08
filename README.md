@@ -86,16 +86,19 @@ ollama run llama3.1:8b "Hello"
 
 ### **Backend**
 ``` bash
+python3 -m venv venv
+source venv/bin/active
 pip install flask flask-cors requests PyPDF2 python-docx python-pptx ollama python-dotenv
 python app.py
 ```
 Make sure you have a `.env` file with:
 ```
-OLLAMA_API_URL=http://link_to_local_ollama_API
+OLLAMA_API_URL="http://IP:PORT/api/generate"
 FLASK_PORT=my_port
 ```
 ### **Frontend**
 ``` bash
 npm install
+npx shadcn@latest add utils
 npm run dev
 ```
