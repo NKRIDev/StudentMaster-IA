@@ -102,3 +102,7 @@ npm install
 npx shadcn@latest add utils
 npm run dev
 ```
+Make sure you have a `.env` file with:
+```
+VITE_API_BASE_URL="http://address_backend"
+```
