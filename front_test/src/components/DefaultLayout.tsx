@@ -12,15 +12,13 @@ export const DefaultLayout = ({children} : {children : React.ReactNode}) => {
     return (
         <div className="flex h-screen bg-slate-50">
             {/*SideCar */}
-            <aside className="w-64 bg-white border-r border-slate-200 transition-all duration-300 flex flex-col">
-                <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-2">
-                        <span className="font-bold text-slate-900">StudentMaster IA</span>
-                    </div>
+            <aside className="pt-5 w-64 bg-white border-r border-slate-200 transition-all duration-300 flex flex-col">
+                <div className="flex justify-center">
+                    <span className="font-bold text-slate-900">StudentMaster IA</span>
                 </div>
 
                 {/*Navigation */}
-                <nav className="flex-1 p-3 space-y-1">
+                <nav className="flex-1 pl-3 pt-6 space-y-1">
                     {
                         navigationItems.map((item) => {
                             const Icon = item.icon;

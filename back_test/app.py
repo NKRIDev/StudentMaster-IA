@@ -34,8 +34,9 @@ CORS(app)
 # Allow extensions
 ALLOWED_EXTENSIONS = {'.pdf', '.txt', '.docx', '.md', '.pptx'}
 
-# file to be processed
-CURRENT_FILE = None
+# text file to be processed
+CURRENT_FILE_NAME = None
+CURRENT_FILE_TEXT = None
 
 #Extracts text from a file based on its extension
 def extract_text_from_file(file):
@@ -130,7 +131,7 @@ Respecte STRICTEMENT les règles suivantes :
 </details>
 
 ### 📘 Texte à résumer (extrait)
-{text[:4000]}
+{text}
 
 ### ➤ Génère maintenant UNIQUEMENT le résumé en Markdown interactif prêt à afficher :
 """
@@ -184,7 +185,7 @@ export interface Flashcard {{
 - Retourne un tableau JSON complet prêt à parser dans React/TypeScript
 - Je veux que tu retournes uniquement le tableau, pas autre chose !
 
-### Exemple de format attendu
+### Format attendu
 [
   {{
     "id": "1",
@@ -199,7 +200,7 @@ export interface Flashcard {{
 ]
 
 ### Texte source à partir duquel générer les flashcards
-{text[:4000]}
+{text}
 
 ### ➤ Génère maintenant **UNIQUEMENT** les flashcards en JSON :
 """
@@ -216,7 +217,13 @@ export interface Flashcard {{
         )
         
         if response.status_code == 200:
-            return response.json()['response']
+            content = response.json()['response']
+
+            try:
+                json.loads(content)
+                return content
+            except json.JSONDecodeError:
+                return json.dumps({"error", "Invalid JSON from API"})
         else:
             return f"API error: {response.status_code}"
     except Exception as e:
@@ -258,7 +265,7 @@ export interface QuizQuestion {{
 - Pas d’autres champs que ceux définis.
 - Le JSON doit être valide, propre et directement utilisable.
 
-### Exemple de format (uniquement structure, ne pas réutiliser) :
+### Format (uniquement structure, ne pas réutiliser) :
 [
   {{
     "id": "1",
@@ -270,7 +277,7 @@ export interface QuizQuestion {{
 ]
 
 ### Texte source
-{text[:4000]}
+{text}
 
 ### ➤ Génère maintenant UNIQUEMENT le tableau JSON :
 """
@@ -287,7 +294,13 @@ export interface QuizQuestion {{
         )
         
         if response.status_code == 200:
-            return response.json()['response']
+            content = response.json()['response']
+            
+            try:
+                json.loads(content)
+                return content
+            except json.JSONDecodeError:
+                return json.dumps({"error", "Invalid JSON from API"})
         else:
             return f"API error: {response.status_code}"
     except Exception as e:
@@ -302,7 +315,8 @@ QUIZ = None
 # Retrieve the document to be processed
 @app.route("/upload", methods=["POST"])
 def upload_file():
-    global CURRENT_FILE
+    global CURRENT_FILE_NAME
+    global CURRENT_FILE_TEXT
     global SUMMARIZE
     global FLASHCARDS
     global QUIZ
@@ -319,53 +333,56 @@ def upload_file():
     _, extension = os.path.splitext(file.filename)
     if extension.lower() not in ALLOWED_EXTENSIONS:
         return jsonify({
-            "error": f"Extension '{extension}' non autorisée. Extensions acceptées : {', '.join(ALLOWED_EXTENSIONS)}"
+            "error": f"Extension '{extension}' not allowed."
         }), 400
     
-    # defined the new file
-    CURRENT_FILE = file
+    # Get content file in text format
+    CURRENT_FILE_NAME = file.filename
+    CURRENT_FILE_TEXT = extract_text_from_file(file)
 
+    #Checked content file
+    if CURRENT_FILE_TEXT.startswith("Error") or CURRENT_FILE_TEXT == "Extension not supported":
+        return jsonify({"error": CURRENT_FILE_TEXT}), 500
+    
     # Create features datas
-    file_text = extract_text_from_file(file)
-
-    SUMMARIZE = summarize(file_text)
-    FLASHCARDS = flashcards_generator(file_text)
-    QUIZ = quiz_generator(file_text)
+    SUMMARIZE = summarize(CURRENT_FILE_TEXT)
+    FLASHCARDS = flashcards_generator(CURRENT_FILE_TEXT)
+    QUIZ = quiz_generator(CURRENT_FILE_TEXT)
 
     return jsonify({"message": "File received", "filename": file.filename})
 
 # Create a summary of the sent file in markdown format 
 @app.route("/summary")
 def get_summary():
-    global CURRENT_FILE
+    global CURRENT_FILE_NAME
     global SUMMARIZE
 
     if SUMMARIZE is None:
         return jsonify({"error" : "No file was sent"}), 400
 
-    return jsonify({"message": "ok", "filename" : CURRENT_FILE.filename, "content" : SUMMARIZE})
+    return jsonify({"message": "ok", "filename" : CURRENT_FILE_NAME, "content" : SUMMARIZE})
 
 # Send flashcards
 @app.route("/flashcards")
 def get_flashcards():
-    global CURRENT_FILE
+    global CURRENT_FILE_NAME
     global FLASHCARDS
 
     if FLASHCARDS is None:
         return jsonify({"error" : "No file was sent"}), 400
 
-    return jsonify({"message": "ok", "filename" : CURRENT_FILE.filename, "content" : FLASHCARDS})
+    return jsonify({"message": "ok", "filename" : CURRENT_FILE_NAME, "content" : FLASHCARDS})
 
 # Send quiz
 @app.route("/quiz")
 def get_quiz():
-    global CURRENT_FILE
+    global CURRENT_FILE_NAME
     global QUIZ
 
     if QUIZ is None:
         return jsonify({"error" : "No file was sent"}), 400
     
-    return jsonify({"message": "ok", "filename" : CURRENT_FILE.filename, "content" : QUIZ})
+    return jsonify({"message": "ok", "filename" : CURRENT_FILE_NAME, "content" : QUIZ})
 
 # Start flask server
 if __name__ == "__main__":
