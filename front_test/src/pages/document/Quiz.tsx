@@ -34,8 +34,7 @@ const Quiz = () => {
             .then((res) => {
                     
                 if (res.data.content) {
-                    //Convert to JSON beceause server send string
-                    const quiz = JSON.parse(res.data.content);
+                    const quiz = res.data.content;
                     setQuiz(quiz);
                 }
             })

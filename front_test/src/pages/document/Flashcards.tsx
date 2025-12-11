@@ -53,7 +53,8 @@ const Flashcards = () => {
             .then((res) => {
                 
                 if (res.data.content) {
-                    const parsedFlashcards = JSON.parse(res.data.content);
+                    console.log(res.data.content)
+                    const parsedFlashcards = res.data.content;
                     setFlashcards(parsedFlashcards);
                 }
             })

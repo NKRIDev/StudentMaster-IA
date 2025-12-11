@@ -370,8 +370,15 @@ def get_flashcards():
 
     if FLASHCARDS is None:
         return jsonify({"error" : "No file was sent"}), 400
-
-    return jsonify({"message": "ok", "filename" : CURRENT_FILE_NAME, "content" : FLASHCARDS})
+    
+    # Transform text format into json
+    flashcards_data = None
+    try:
+        flashcards_data = json.loads(FLASHCARDS)
+    except json.JSONDecodeError:
+        return json.dumps({"error", "Invalid JSON from flashcards"})
+    
+    return jsonify({"message": "ok", "filename" : CURRENT_FILE_NAME, "content" : flashcards_data})
 
 # Send quiz
 @app.route("/quiz")
@@ -382,7 +389,14 @@ def get_quiz():
     if QUIZ is None:
         return jsonify({"error" : "No file was sent"}), 400
     
-    return jsonify({"message": "ok", "filename" : CURRENT_FILE_NAME, "content" : QUIZ})
+    # Transform text format into json
+    quiz_data = None
+    try:
+        quiz_data = json.loads(QUIZ)
+    except json.JSONDecodeError:
+        return json.dumps({"error", "Invalid JSON from quiz"})
+
+    return jsonify({"message": "ok", "filename" : CURRENT_FILE_NAME, "content" : quiz_data})
 
 # Start flask server
 if __name__ == "__main__":
