@@ -5,6 +5,8 @@ import { useState } from "react";
 import { File as FileIcon } from "lucide-react";
 import { uploadFile } from "@/services/uploadService";
 import { useNavigate } from "react-router-dom";
+import { useDocument } from "@/contexts/DocumentContext";
+import { useToast } from "@/hooks/use-toast";
 
 /**
  * Page that manages file uploads
@@ -16,6 +18,9 @@ const Upload = () => {
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [uploadedFile, setUploadedFile] = useState<File | null>(null);
     const [isComplete, setIsComplete] = useState<boolean>(false);
+
+    const {changeDocument} = useDocument();
+    const {toast} = useToast();
 
     /*
     Manage darg and drop system
@@ -56,7 +61,12 @@ const Upload = () => {
 
         try{
             const response = await uploadFile(file);
-            //console.log("Upload : ", response.data);
+            const generatedDocument = response.data;
+
+            /*
+            Apply new datas elements
+            */
+            changeDocument(generatedDocument);
 
             setIsProcessing(false);
             setIsComplete(true);
@@ -64,6 +74,10 @@ const Upload = () => {
         catch(error){
             console.error(error);
             setIsProcessing(false);
+            toast({title: "Erreur",
+                   description: "Une erreur est survenue lors du dépôt du fichier.", 
+                   variant:"destructive"
+                })
         }
     }
 

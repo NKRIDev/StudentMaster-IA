@@ -1,25 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { getFlashcards } from "@/services/flashcardService";
+import { useDocument } from "@/contexts/DocumentContext";
+import { Flashcard } from "@/models/DocumentModel";
 import { Brain, ChevronLeft, ChevronRight, RotateCw } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export interface Flashcard {
-  id: string,
-  question: string,
-  answer: string,
-}
-
 const Flashcards = () => {
     const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
 
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [isFlipped, setIsFlipped] = useState<boolean>(false);
 
     const currentCard = flashcards[currentIndex];
     const progress = ((currentIndex +1) / flashcards.length) *100;
+
+    /*
+    Data document
+    */
+    const document = useDocument();
 
     /*
     Next cards
@@ -48,23 +47,22 @@ const Flashcards = () => {
         setIsFlipped(!isFlipped);
     };
 
+    /*
+    Update state flashcards
+    */
     useEffect(() => {
-        getFlashcards()
-            .then((res) => {
-                
-                if (res.data.content) {
-                    console.log(res.data.content)
-                    const parsedFlashcards = res.data.content;
-                    setFlashcards(parsedFlashcards);
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    }, []);
+        if(document.document?.flashcards){
+            setFlashcards(document.document.flashcards);
+        }
+
+    }, [document]);
+
+    /*
+    If flashcards is null, display error
+    */
+    if(!flashcards.length){
+        return <h1>Aucune flashcard disponible.</h1>;
+    }
 
     return(
         <div className="flex h-screen bg-slate-50">
@@ -95,13 +93,6 @@ const Flashcards = () => {
                         </div>
                     </div>
 
-                    {/*Loader */}
-                    {loading && (
-                        <div className="text-center text-blue-600 font-bold">
-                            Génération en cours...
-                        </div>
-                    )}
-
                     {/*Card container*/}
                     <div className="mb-8">
                         <Card 
@@ -112,9 +103,8 @@ const Flashcards = () => {
                             <CardContent className="p-12 flex flex-col items-center justify-center min-h-[400px]">
                                 <div className="text-center w-full">
                                     {
-                                        !loading && (
-                                            !isFlipped ? (
-                                                <>
+                                        !isFlipped ? (
+                                            <>
                                                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium mb-6">
                                                     Question
                                                 </div>
@@ -125,9 +115,9 @@ const Flashcards = () => {
                                                     <RotateCw className="w-4 h-4"/>
                                                     Cliquez pour voir la réponse
                                                 </p>
-                                                </>
+                                            </>
                                             ) : (
-                                                <>
+                                            <>
                                                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-sm font-medium mb-6">
                                                     Réponse
                                                 </div>
@@ -138,9 +128,8 @@ const Flashcards = () => {
                                                     <RotateCw className="w-4 h-4"/>
                                                     Cliquez pour voir la question
                                                 </p>
-                                                </>
+                                            </>
                                             )
-                                        )
                                     }
                                 </div>
                             </CardContent>

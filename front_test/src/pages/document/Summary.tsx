@@ -1,29 +1,32 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { getSummary } from "@/services/summaryService";
+import { useDocument } from "@/contexts/DocumentContext";
 import { BookMarked, Download } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import { useNavigate } from "react-router-dom";
 import rehypeRaw from "rehype-raw";
 
 const Summary = () => {
-    const [summary, setSummary] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [summary, setSummary] = useState<string>("");
+
+    /*
+    document data
+    */
+    const document = useDocument();
 
     useEffect(() => {
-        
-        getSummary()
-            .then((res) => {
-                setSummary(res.data.content);
-            })
-            .catch((error) => {
-                console.error(error);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+        if(document.document?.summarize){
+            setSummary(document.document.summarize);
+        }
+    }, [document]);
 
-    }, []);
+    /*
+    Checked if summary is empty
+    */
+    if(!summary.length){
+        return <h1>Aucun résumé n'a pu être généré.</h1>;
+    }
 
     return (
         <div className="flex h-screen bg-slate-50">
@@ -50,16 +53,8 @@ const Summary = () => {
                         </Button>
                     </div>
 
-                    {/*Loader */}
-                    {loading && (
-                        <div className="text-center text-blue-600 font-bold">
-                            Génération en cours...
-                        </div>
-                    )}
-
                     {/*Revision content in mardkwon format => use react-markdown for markdown*/}
                     {
-                        !loading && (
                         <Card className="p-8 rounded-xl shadow-md bg-white border border-slate-200">
                             <CardContent className="p-0">
                                 <div className="prose prose-slate max-w-none">
@@ -71,7 +66,6 @@ const Summary = () => {
                                 </div>
                             </CardContent>
                         </Card>
-                        )
                     }
                 </div>
             </main>

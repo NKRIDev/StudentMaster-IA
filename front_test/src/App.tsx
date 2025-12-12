@@ -6,25 +6,58 @@ import Revision from "./pages/document/Revision";
 import Summary from "./pages/document/Summary";
 import Upload from "./pages/Upload";
 import { DefaultLayout } from "./components/DefaultLayout";
-import Document from "./pages/Document";
+import { DocumentProvider } from "./contexts/DocumentContext";
+import { DocRedirection } from "./components/DocRedirection";
+import { Toaster } from "./components/ui/toaster";
+import { DocumentBoard } from "./pages/DocumentDashoard";
 
 export default function App() {
   return (
+    <>
     <Router>
       <DefaultLayout>
-        <Routes>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/upload" element={<Upload />} />
+        <DocumentProvider>
+          <Routes>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/upload" element={<Upload />} />
 
-          <Route path="/document" element={<Document />} />
-          <Route path="/document/summary" element={<Summary />} />
-          <Route path="/document/revision" element={<Revision />} />
-          <Route path="/document/flashcards" element={<Flashcards />} />
-          <Route path="/document/quiz" element={<Quiz />} />
+            {/*Document features */}
+            <Route path="/document" element={
+              <DocRedirection>
+                <DocumentBoard/>
+              </DocRedirection>
+            } />
+
+            <Route path="/document/summary" element={
+              <DocRedirection>
+                <Summary/>
+              </DocRedirection>
+            } />
+
+            <Route path="/document/revision" element={
+              <DocRedirection>
+                <Revision/>
+              </DocRedirection>
+            } />
+            
+            <Route path="/document/flashcards" element={
+              <DocRedirection>
+                <Flashcards/>
+              </DocRedirection>
+            } />
+
+            <Route path="/document/quiz" element={
+              <DocRedirection>
+                <Quiz/>
+              </DocRedirection>
+            } />
           
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
+        </DocumentProvider>
       </DefaultLayout>
     </Router>
+    <Toaster/>
+    </>
   );
 }

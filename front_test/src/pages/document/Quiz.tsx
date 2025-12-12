@@ -1,24 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { getQuiz } from "@/services/quizService";
+import { useDocument } from "@/contexts/DocumentContext";
+import { QuizQuestion } from "@/models/DocumentModel";
 import { Brain, CheckCircle, CheckCircle2, Trophy, XCircle } from "lucide-react";
 import { use, useEffect, useState } from "react";
-
-export interface QuizQuestion {
-  id: string,
-  question: string,
-  options: string[],
-  correctAnswer: number,
-  explanation: string,
-}
 
 /*
 Quiz section
 */
 const Quiz = () => {
     const [quiz, setQuiz] = useState<QuizQuestion[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
 
     const [currentQuestion, setCurrentQuestion] = useState<number>(0);
     const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -29,22 +21,23 @@ const Quiz = () => {
     const question = quiz[currentQuestion];
     const progress = ((currentQuestion +1) / quiz.length) * 100;
 
+    /*
+    Data document
+    */
+    const document = useDocument();
+
     useEffect(() => {
-        getQuiz()
-            .then((res) => {
-                    
-                if (res.data.content) {
-                    const quiz = res.data.content;
-                    setQuiz(quiz);
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    }, []);
+        if(document.document?.quiz){
+            setQuiz(document.document.quiz);
+        }
+    }, [document]);
+
+    /*
+    If quiz data if empty
+    */
+    if(!quiz.length){
+        return <h1>Aucune questions disponibles</h1>;
+    }
 
     /*
     Select answer
@@ -92,14 +85,6 @@ const Quiz = () => {
         setShowResult(false);
         setScore(0);
         setIsQuizCompleted(false);
-    }
-
-    if(loading){
-        return(
-        <div className="text-center text-blue-600 font-bold">
-            Génération en cours...
-        </div>
-        );
     }
 
     {/*Displaying the results when the quiz is finished */}

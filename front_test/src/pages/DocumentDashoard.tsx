@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useDocument } from "@/contexts/DocumentContext";
 import { Album, BookOpen, Brain, ChevronRight, FileText, GraduationCap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -38,8 +39,9 @@ const cards = [
     },
 ];
 
-const Document = () => {
+export const DocumentBoard = () => {
     const navigate = useNavigate();
+    const document = useDocument();
 
     return(
         <div className="p-8 max-w-5xl mx-auto">
@@ -52,7 +54,7 @@ const Document = () => {
                     
                     <div>
                         <h1 className="text-3xl font-bold text-slate-900">
-                            NOM DU DOCUMENT
+                            {document.document.filename}
                         </h1>
                         
                         <p className="text-slate-600">
@@ -112,5 +114,3 @@ const Document = () => {
         </div>
     );
 };
-
-export default Document;

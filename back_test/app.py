@@ -220,10 +220,10 @@ export interface Flashcard {{
             content = response.json()['response']
 
             try:
-                json.loads(content)
-                return content
+                flashcards_data = json.loads(content)
+                return flashcards_data
             except json.JSONDecodeError:
-                return json.dumps({"error", "Invalid JSON from API"})
+                return json.dumps({"error", "Invalid JSON from flashcards"})
         else:
             return f"API error: {response.status_code}"
     except Exception as e:
@@ -297,10 +297,10 @@ export interface QuizQuestion {{
             content = response.json()['response']
             
             try:
-                json.loads(content)
-                return content
+                quiz_data = json.loads(content)
+                return quiz_data
             except json.JSONDecodeError:
-                return json.dumps({"error", "Invalid JSON from API"})
+                return json.dumps({"error", "Invalid JSON from Quizz"})
         else:
             return f"API error: {response.status_code}"
     except Exception as e:
@@ -317,9 +317,6 @@ QUIZ = None
 def upload_file():
     global CURRENT_FILE_NAME
     global CURRENT_FILE_TEXT
-    global SUMMARIZE
-    global FLASHCARDS
-    global QUIZ
 
     if "file" not in request.files:
         return jsonify({"error" : "No file received"}), 400
@@ -345,11 +342,14 @@ def upload_file():
         return jsonify({"error": CURRENT_FILE_TEXT}), 500
     
     # Create features datas
-    SUMMARIZE = summarize(CURRENT_FILE_TEXT)
-    FLASHCARDS = flashcards_generator(CURRENT_FILE_TEXT)
-    QUIZ = quiz_generator(CURRENT_FILE_TEXT)
+    summarize_data = summarize(CURRENT_FILE_TEXT)
+    flashcards_data = flashcards_generator(CURRENT_FILE_TEXT)
+    quiz_data = quiz_generator(CURRENT_FILE_TEXT)
 
-    return jsonify({"message": "File received", "filename": file.filename})
+    return jsonify({"filename": file.filename, 
+                    "summarize" : summarize_data, 
+                    "flashcards" : flashcards_data,
+                    "quiz": quiz_data})
 
 # Create a summary of the sent file in markdown format 
 @app.route("/summary")
