@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle2, Loader2, UploadIcon } from "lucide-react";
+import { CheckCircle2, CircleX, Loader2, UploadIcon } from "lucide-react";
 import { useState } from "react";
 import { File as FileIcon } from "lucide-react";
 import { uploadFile } from "@/services/uploadService";
@@ -18,6 +18,7 @@ const Upload = () => {
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [uploadedFile, setUploadedFile] = useState<File | null>(null);
     const [isComplete, setIsComplete] = useState<boolean>(false);
+    const [isError, setError] = useState<string>("");
 
     const {changeDocument} = useDocument();
     const {toast} = useToast();
@@ -70,16 +71,23 @@ const Upload = () => {
 
             setIsProcessing(false);
             setIsComplete(true);
+            
+            toast({
+                title: "Félicitations 🎉",
+                description: "Contenus générés avec succès.",
+                variant: "success"
+            });
         }
         catch(error){
             console.error(error);
             setIsProcessing(false);
             toast({title: "Erreur",
-                   description: "Une erreur est survenue lors du dépôt du fichier.", 
+                   description: error.response.data.error, 
                    variant:"destructive"
-                })
+                });
+            setError(error.response.data.error);
         }
-    }
+    };
 
     return (
         <div className="flex h-screen bg-slate-50">
@@ -184,7 +192,46 @@ const Upload = () => {
                                                     </p>
                                                 </div>
                                             )}
+
+                                            {/* Success State */}
+                                            {isError && (
+                                                <div className="space-y-4">
+                                                    <div className="p-6 bg-red-50 rounded-lg border border-red-200">
+                                                        <div className="flex items-start gap-3">
+                                                            <CircleX className="w-6 h-6 text-red-600 mt-0.5" />
+                                                            <div>
+                                                                <h3 className="font-semibold text-red-900 mb-1">
+                                                                    Une erreur est survenue lors du traitement du document.
+                                                                </h3>
+                                                                <div className="text-sm text-red-700 mb-4">
+                                                                    <p>L'IA n'a pas pu générer les éléments attendus. Veuillez réessayer.</p>
+                                                                    <p>Cause : {isError}</p>
+                                                                </div>
+
+                                                                <div className="flex gap-2">
+                                                                <Button 
+                                                                size="sm"
+                                                                onClick={() => navigate("/dashboard")}
+                                                                >
+                                                                    Retour au dashboard
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             
+                                                <Button 
+                                                variant="outline" 
+                                                className="w-full"
+                                                onClick={() => {
+                                                    setUploadedFile(null)
+                                                    setIsComplete(false)
+                                                }}
+                                                >
+                                                    Essayer de téléverser un autre Document
+                                                </Button>
+                                                </div>
+                                            )}
                                             
                                             {/* Success State */}
                                             {isComplete && (
@@ -196,42 +243,42 @@ const Upload = () => {
                                                                 <h3 className="font-semibold text-emerald-900 mb-1">
                                                                     Document traité avec succès !
                                                                 </h3>
-                                                            <p className="text-sm text-emerald-700 mb-4">
-                                                                L'IA a généré vos résumés, fiches de révision, flashcards et quiz.
-                                                            </p>
+                                                                <p className="text-sm text-emerald-700 mb-4">
+                                                                    L'IA a généré vos résumés, fiches de révision, flashcards et quiz.
+                                                                </p>
                                                         
-                                                        <div className="flex gap-2">
-                                                            <Button 
-                                                            size="sm"
-                                                            onClick={() => navigate("/document")}
-                                                            >
-                                                                Voir les outils générés
-                                                            </Button>
-                                                            
-                                                            <Button 
-                                                            size="sm"
-                                                            variant="outline"
-                                                            onClick={() => console.log("Go to dashboard")}
-                                                            >
-                                                                Retour au dashboard
-                                                            </Button>
+                                                            <div className="flex gap-2">
+                                                                <Button 
+                                                                size="sm"
+                                                                onClick={() => navigate("/document")}
+                                                                >
+                                                                    Voir les outils générés
+                                                                </Button>
+                                                                
+                                                                <Button 
+                                                                size="sm"
+                                                                variant="outline"
+                                                                onClick={() => navigate("/dashboard")}
+                                                                >
+                                                                    Retour au dashboard
+                                                                </Button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
                                             
-                                            <Button 
-                                            variant="outline" 
-                                            className="w-full"
-                                            onClick={() => {
-                                                setUploadedFile(null)
-                                                setIsComplete(false)
-                                            }}
-                                            >
-                                                Téléverser un autre Document
-                                            </Button>
-                                        </div>
-                                    )}
+                                                <Button 
+                                                variant="outline" 
+                                                className="w-full"
+                                                onClick={() => {
+                                                    setUploadedFile(null)
+                                                    setIsComplete(false)
+                                                }}
+                                                >
+                                                    Téléverser un autre Document
+                                                </Button>
+                                                </div>
+                                            )}
                                     </div>
                                 )}
                                 </CardContent>

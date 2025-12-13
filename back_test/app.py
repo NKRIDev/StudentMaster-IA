@@ -330,7 +330,7 @@ def upload_file():
     _, extension = os.path.splitext(file.filename)
     if extension.lower() not in ALLOWED_EXTENSIONS:
         return jsonify({
-            "error": f"Extension '{extension}' not allowed."
+            "error": f"L'extension '{extension}' n'est pas autorisé."
         }), 400
     
     # Get content file in text format
