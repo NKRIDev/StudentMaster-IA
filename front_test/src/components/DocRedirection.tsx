@@ -13,7 +13,7 @@ export const DocRedirection = ({children} : {children : ReactNode}) => {
     Returns to the main page if no data is available
     */
     if(document.document == null){
-        return <Navigate to={"/"} replace/>;
+        return <Navigate to={"/dashboard"} replace/>;
         //TODO error message ?
     }
 
