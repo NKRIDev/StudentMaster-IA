@@ -11,6 +11,7 @@ import { DocRedirection } from "./components/DocRedirection";
 import { Toaster } from "./components/ui/toaster";
 import { DocumentBoard } from "./pages/DocumentDashoard";
 import { Login } from "./pages/Login";
+import { Register } from "./pages/Register";
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
         <Routes>
           {/*Login route */}
           <Route path="/login" element={<Login/>}/>
+          <Route path="/register" element={<Register/>}/>
           
           {/*Private Dashboard */}
           <Route element={

@@ -1,19 +1,38 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 import { Label } from "@radix-ui/react-label";
-import { ArrowLeft, ArrowRight, Loader, Lock, Mail } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader, Lock, Mail, User } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 
-export const Login = () => {
+export const Register = () => {
+    const [pseudo, setPseudo] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const [passwordConfirm, setPasswordConfirm] = useState<string>("");
 
     const [isLoading, setLoading] = useState<boolean>(false);
 
-    const handleLogin = (event: FormEvent) => {
+    const {toast} = useToast();
+
+    const handleRegister = (event: FormEvent) => {
         event.preventDefault();
+
+        /*
+        Passwords checked
+        */
+        if(password !== passwordConfirm){
+            toast({
+                title: "Erreur",
+                description: "Les mots de passe ne correspondent pas.",
+                variant: "destructive"
+            });
+            
+            return;
+        }
+
         setLoading(true);
         alert(email + "" + password);
     };
@@ -29,12 +48,29 @@ export const Login = () => {
                 <Card className="border-slate-200 shadow-xl">
                     {/*Card header */}
                     <CardHeader className="flex items-center">
-                        <CardTitle className="text-2xl font-bold text-slate-900">Bon retour !</CardTitle>
-                        <CardDescription className="text-slate-600">Connectez-vous pour accéder à vos cours et outils d'apprentissage</CardDescription>
+                        <CardTitle className="text-2xl font-bold text-slate-900">Créer un compte</CardTitle>
+                        <CardDescription className="text-slate-600">Commencez votre parcours d'apprentissage avec l'IA</CardDescription>
                     </CardHeader>
 
                     <CardContent>
-                        <form className="space-y-4" onSubmit={handleLogin}>
+                        <form className="space-y-4" onSubmit={handleRegister}>
+
+                            {/*Pseudo */}
+                            <div className="space-y-2">
+                                <Label className="text-sm text-slate-700">Pseudo</Label>
+
+                                <div className="relative">
+                                    <User className="absolute left-3 top-2 h-5 w-5 text-slate-400"/>
+                                    <Input 
+                                        type="text" 
+                                        placeholder="Votre pseudo" 
+                                        className="pl-10"
+                                        value={pseudo}
+                                        onChange={(e) => setPseudo(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                            </div>
 
                             {/*Email */}
                             <div className="space-y-2">
@@ -70,6 +106,23 @@ export const Login = () => {
                                 </div>
                             </div>
 
+                            {/*Confirm password */}
+                            <div className="space-y-2">
+                                <Label className="text-sm text-slate-700">Confirmer le mot de passe</Label>
+
+                                <div className="relative">
+                                    <Lock className="absolute left-3 top-2 h-5 w-5 text-slate-400"/>
+                                    <Input 
+                                        type="password" 
+                                        placeholder="••••••••" 
+                                        className="pl-10"
+                                        value={passwordConfirm}
+                                        onChange={(e) => setPasswordConfirm(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
                             {/*Connect button */}
                             {
                                 isLoading ? (
@@ -92,7 +145,7 @@ export const Login = () => {
                                         size="lg"
                                     >
                                         <div className="flex items-center gap-2">
-                                            Se connecter
+                                            Créer mon compte
                                             <ArrowRight className="w-4 h-4" />
                                         </div>
                                     </Button>
@@ -105,7 +158,7 @@ export const Login = () => {
                                     <span className="w-full border-t border-slate-200" />
                                 </div>
                                 <div className="relative flex justify-center text-xs uppercase">
-                                    <span className="bg-white px-2 text-slate-500">Ou continuer avec</span>
+                                    <span className="bg-white px-2 text-slate-500">Ou s'inscrire avec</span>
                                 </div>
                             </div>
                             
@@ -128,12 +181,12 @@ export const Login = () => {
                     {/**Footer card */}
                     <CardFooter className="flex flex-col space-y-4">
                         <div className="text-sm text-center text-slate-600">
-                            Pas encore de compte ?{" "}
+                            Vous avez déjà un compte ?{" "}
                             <Link 
-                            to="/register" 
+                            to="/login" 
                             className="text-blue-600 hover:text-blue-700 font-medium hover:underline"
                             >
-                                Créer un compte
+                                Se connecter
                             </Link>
                         </div>
                     </CardFooter>
