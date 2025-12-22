@@ -27,6 +27,11 @@ __pycache__/
 *.pyc
 *.pkl
 
+# Flask / Database
+instance/
+*.sqlite
+*.db
+
 # Environnement virtuel
 venv/
 env/
