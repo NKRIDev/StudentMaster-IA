@@ -89,7 +89,9 @@ ollama run llama3.1:8b "Hello"
 python3 -m venv venv
 source venv/bin/active
 pip install flask flask-cors requests PyPDF2 python-docx python-pptx ollama python-dotenv flask-sqlalchemy flask-login
-python app.py
+export FLASK_APP=project
+export FLASH_DEBUG=1
+flask run
 ```
 Make sure you have a `.env` file with:
 ```
