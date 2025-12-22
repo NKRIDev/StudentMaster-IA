@@ -94,6 +94,7 @@ python app.py
 Make sure you have a `.env` file with:
 ```
 OLLAMA_API_URL="http://IP:PORT/api/generate"
+FLASK_HOST="myhost"
 FLASK_PORT=my_port
 ```
 ### **Frontend**
