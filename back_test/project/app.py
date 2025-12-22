@@ -1,6 +1,9 @@
 ##pip install flask flask-cors requests PyPDF2 python-docx python-pptx ollama
 #pip install python-dotenv
 
+from flask import Blueprint
+from . import db
+
 # Importing flask library
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -28,8 +31,8 @@ OLLAMA_API = os.getenv("OLLAMA_API_URL")
 FLASK_PORT = int(os.getenv("FLASK_PORT"))
 
 # Application and patch CORS errors
-app = Flask(__name__)
-CORS(app)
+main = Blueprint('main', __name__)
+CORS(main)
 
 # Allow extensions
 ALLOWED_EXTENSIONS = {'.pdf', '.txt', '.docx', '.md', '.pptx'}
@@ -313,7 +316,7 @@ FLASHCARDS = None
 QUIZ = None
 
 # Retrieve the document to be processed
-@app.route("/upload", methods=["POST"])
+@main.route("/upload", methods=["POST"])
 def upload_file():
     global CURRENT_FILE_NAME
     global CURRENT_FILE_TEXT
@@ -352,7 +355,7 @@ def upload_file():
                     "quiz": quiz_data})
 
 # Create a summary of the sent file in markdown format 
-@app.route("/summary")
+@main.route("/summary")
 def get_summary():
     global CURRENT_FILE_NAME
     global SUMMARIZE
@@ -363,7 +366,7 @@ def get_summary():
     return jsonify({"message": "ok", "filename" : CURRENT_FILE_NAME, "content" : SUMMARIZE})
 
 # Send flashcards
-@app.route("/flashcards")
+@main.route("/flashcards")
 def get_flashcards():
     global CURRENT_FILE_NAME
     global FLASHCARDS
@@ -381,7 +384,7 @@ def get_flashcards():
     return jsonify({"message": "ok", "filename" : CURRENT_FILE_NAME, "content" : flashcards_data})
 
 # Send quiz
-@app.route("/quiz")
+@main.route("/quiz")
 def get_quiz():
     global CURRENT_FILE_NAME
     global QUIZ
@@ -398,6 +401,20 @@ def get_quiz():
 
     return jsonify({"message": "ok", "filename" : CURRENT_FILE_NAME, "content" : quiz_data})
 
+# Auth test
+@main.route("/")
+def index():
+    return "Index"
+
+# Profile page
+@main.route("/profile")
+def profile():
+    return "Profile"
+
 # Start flask server
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=FLASK_PORT, debug=True)
+    main.run(
+        host="0.0.0.0",
+        port=FLASK_PORT,
+        debug=True
+    )

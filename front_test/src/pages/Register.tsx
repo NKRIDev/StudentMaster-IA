@@ -7,24 +7,25 @@ import { ArrowLeft, ArrowRight, Loader, Lock, Mail, User } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthCard } from "./auths/AuthCard";
+import { registerUser } from "@/services/authService";
 
 export const Register = () => {
     const [pseudo, setPseudo] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-    const [passwordConfirm, setPasswordConfirm] = useState<string>("");
+    const [confirmPassword, setPasswordConfirm] = useState<string>("");
 
     const [isLoading, setLoading] = useState<boolean>(false);
 
     const {toast} = useToast();
 
-    const handleRegister = (event: FormEvent) => {
+    const handleRegister = async (event: FormEvent) => {
         event.preventDefault();
 
         /*
         Passwords checked
         */
-        if(password !== passwordConfirm){
+        if(password !== confirmPassword){
             toast({
                 title: "Erreur",
                 description: "Les mots de passe ne correspondent pas.",
@@ -35,7 +36,30 @@ export const Register = () => {
         }
 
         setLoading(true);
-        alert(email + "" + password);
+
+        /*
+        Send register data to server
+        */
+        const result = await registerUser({
+            pseudo, email, password, confirmPassword
+        });
+
+        if(result.error){
+            toast({
+                title: "Erreur",
+                description: result.error,
+                variant: "destructive"
+            });
+        }
+        else{
+            toast({
+                title: "Succès",
+                description: result.message,
+                variant: "success"
+            });
+        }
+
+        setLoading(false);
     };
 
     return(
@@ -126,7 +150,7 @@ export const Register = () => {
                                         type="password" 
                                         placeholder="••••••••" 
                                         className="pl-10"
-                                        value={passwordConfirm}
+                                        value={confirmPassword}
                                         onChange={(e) => setPasswordConfirm(e.target.value)}
                                         required
                                     />
