@@ -2,6 +2,7 @@
 #pip install python-dotenv
 
 from flask import Blueprint
+from flask_login import login_required, current_user
 from . import db
 
 # Importing flask library
@@ -407,9 +408,16 @@ def index():
     return "Index"
 
 # Profile page
-@main.route("/profile")
+@main.route("/profile", methods=["GET"])
+@login_required
 def profile():
-    return "Profile"
+    return jsonify({
+        "user": {
+            "id": current_user.id,
+            "email": current_user.email,
+            "pseudo": current_user.pseudo
+        }
+    })
 
 # Start flask server
 if __name__ == "__main__":
