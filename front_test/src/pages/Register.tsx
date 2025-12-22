@@ -6,6 +6,7 @@ import { Label } from "@radix-ui/react-label";
 import { ArrowLeft, ArrowRight, Loader, Lock, Mail, User } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
+import { AuthCard } from "./auths/AuthCard";
 
 export const Register = () => {
     const [pseudo, setPseudo] = useState<string>("");
@@ -45,15 +46,24 @@ export const Register = () => {
                     <Link to="/" className="hover:underline">Retour à l’accueil</Link>
                 </div>
 
-                <Card className="border-slate-200 shadow-xl">
-                    {/*Card header */}
-                    <CardHeader className="flex items-center">
-                        <CardTitle className="text-2xl font-bold text-slate-900">Créer un compte</CardTitle>
-                        <CardDescription className="text-slate-600">Commencez votre parcours d'apprentissage avec l'IA</CardDescription>
-                    </CardHeader>
+                <AuthCard
+                    title="Créer un compte"
+                    description="Commencez votre parcours d'apprentissage avec l'IA"
+                    footer={
+                        <div className="text-sm text-center text-slate-600">
+                            Vous avez déjà un compte ?{" "}
+                            <Link 
+                            to="/login" 
+                            className="text-blue-600 hover:text-blue-700 font-medium hover:underline"
+                            >
+                                Se connecter
+                            </Link>
+                        </div>
+                    }
+                >
 
-                    <CardContent>
-                        <form className="space-y-4" onSubmit={handleRegister}>
+                    {/**Form: card content */}
+                    <form className="space-y-4" onSubmit={handleRegister}>
 
                             {/*Pseudo */}
                             <div className="space-y-2">
@@ -176,21 +186,7 @@ export const Register = () => {
                                 {/**TODO: other link ? */}
                             </div>
                         </form>
-                    </CardContent>
-
-                    {/**Footer card */}
-                    <CardFooter className="flex flex-col space-y-4">
-                        <div className="text-sm text-center text-slate-600">
-                            Vous avez déjà un compte ?{" "}
-                            <Link 
-                            to="/login" 
-                            className="text-blue-600 hover:text-blue-700 font-medium hover:underline"
-                            >
-                                Se connecter
-                            </Link>
-                        </div>
-                    </CardFooter>
-                </Card>
+                </AuthCard>
             </div>
         </div>
     );

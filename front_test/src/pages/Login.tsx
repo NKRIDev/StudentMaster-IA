@@ -5,6 +5,7 @@ import { Label } from "@radix-ui/react-label";
 import { ArrowLeft, ArrowRight, Loader, Lock, Mail } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
+import { AuthCard } from "./auths/AuthCard";
 
 export const Login = () => {
     const [email, setEmail] = useState<string>("");
@@ -26,15 +27,23 @@ export const Login = () => {
                     <Link to="/" className="hover:underline">Retour à l’accueil</Link>
                 </div>
 
-                <Card className="border-slate-200 shadow-xl">
-                    {/*Card header */}
-                    <CardHeader className="flex items-center">
-                        <CardTitle className="text-2xl font-bold text-slate-900">Bon retour !</CardTitle>
-                        <CardDescription className="text-slate-600">Connectez-vous pour accéder à vos cours et outils d'apprentissage</CardDescription>
-                    </CardHeader>
-
-                    <CardContent>
-                        <form className="space-y-4" onSubmit={handleLogin}>
+                <AuthCard
+                    title="Bon retour !"
+                    description="Connectez-vous pour accéder à vos cours et outils d'apprentissage"
+                    footer={
+                        <div className="text-sm text-center text-slate-600">
+                            Pas encore de compte ?{" "}
+                            <Link 
+                                to="/register" 
+                                className="text-blue-600 hover:text-blue-700 font-medium hover:underline"
+                            >
+                                Créer un compte
+                            </Link>
+                        </div>
+                    }
+                >
+                    {/**Card content: login form */}
+                    <form className="space-y-4" onSubmit={handleLogin}>
 
                             {/*Email */}
                             <div className="space-y-2">
@@ -123,21 +132,7 @@ export const Login = () => {
                                 {/**TODO: other link ? */}
                             </div>
                         </form>
-                    </CardContent>
-
-                    {/**Footer card */}
-                    <CardFooter className="flex flex-col space-y-4">
-                        <div className="text-sm text-center text-slate-600">
-                            Pas encore de compte ?{" "}
-                            <Link 
-                            to="/register" 
-                            className="text-blue-600 hover:text-blue-700 font-medium hover:underline"
-                            >
-                                Créer un compte
-                            </Link>
-                        </div>
-                    </CardFooter>
-                </Card>
+                </AuthCard>
             </div>
         </div>
     );
