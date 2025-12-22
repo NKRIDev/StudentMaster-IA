@@ -29,6 +29,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 OLLAMA_API = os.getenv("OLLAMA_API_URL")
+FLASH_HOST = os.getenv("FLASK_HOST")
 FLASK_PORT = int(os.getenv("FLASK_PORT"))
 
 # Application and patch CORS errors
@@ -422,7 +423,7 @@ def profile():
 # Start flask server
 if __name__ == "__main__":
     main.run(
-        host="0.0.0.0",
+        host=FLASK_HOST,
         port=FLASK_PORT,
         debug=True
     )
