@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_login import login_user
+from flask_login import login_user, logout_user, login_required
 from flask_cors import cross_origin
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
@@ -7,6 +7,7 @@ from .models import User
 
 auth = Blueprint('auth', __name__)
 
+# Login route
 @auth.route('/api/auth/login', methods=["POST"])
 @cross_origin()
 def login():
@@ -32,6 +33,7 @@ def login():
         }
     }), 201
 
+# Register route
 @auth.route('/api/auth/register', methods=["POST"])
 @cross_origin()
 #@cross_origin(origins=["http://localhost:5173"])
@@ -76,7 +78,12 @@ def register():
         }
     }), 201
 
-
-@auth.route('/logout')
+# Logout route
+@auth.route('/api/auth/logout')
+@login_required
 def logout():
-    return 'Logout'
+    logout_user()
+
+    return jsonify({
+        "message": "Utilisateur déconnecté"
+    }), 201
