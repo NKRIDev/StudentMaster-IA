@@ -12,9 +12,11 @@ interface User {
 /**
  * What the context takes as a parameter
  */
-interface AuthContextType {
+interface AuthContextType { 
     user : User | null;
-    changeUser : (newUser : User) => void;
+    token : string | null;
+    login : (newToken : string, newUser : User) => void;
+    logout : () => void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -23,15 +25,24 @@ const AuthContext = createContext<AuthContextType | null>(null);
  * Data accessible from children
  */
 export const AuthProvider = ({children} : {children : ReactNode}) => {
+    const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
     const [user, setUser] = useState<User | null>(null);
 
-    const changeUser = (newUser : User) => {
+    const login = (newToken : string, newUser : User) => {
+        localStorage.setItem("token", newToken);
+        setToken(newToken);
         setUser(newUser);
     }
 
+    const logout = () => {
+        localStorage.removeItem("token");
+        setToken(null);
+        setUser(null);
+    };
+
     return (
         <AuthContext.Provider 
-        value={{user, changeUser}}
+        value={{user, token, login, logout}}
         >
             {children}
         </AuthContext.Provider>

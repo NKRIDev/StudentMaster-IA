@@ -6,9 +6,10 @@ import { useNavigate } from "react-router-dom";
 const Dashboard = () => {
     const navigate = useNavigate();
 
-    const {user} = useAuth();
+    const {user, token} = useAuth();
 
     console.log("Current user :", user);
+    console.log("Current token :", token);
 
     return(
         <div className="p-8 max-w-7xl mx-auto">
