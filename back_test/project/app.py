@@ -351,9 +351,9 @@ def upload_file():
         return jsonify({"error": CURRENT_FILE_TEXT}), 500
     
     # Create features datas
-    summarize_data = summarize(CURRENT_FILE_TEXT)
-    flashcards_data = flashcards_generator(CURRENT_FILE_TEXT)
-    quiz_data = quiz_generator(CURRENT_FILE_TEXT)
+    summarize_data = summarize(CURRENT_FILE_TEXT, "phi3")
+    flashcards_data = flashcards_generator(CURRENT_FILE_TEXT, "phi3")
+    quiz_data = quiz_generator(CURRENT_FILE_TEXT, "phi3")
 
     return jsonify({"filename": file.filename, 
                     "summarize" : summarize_data, 

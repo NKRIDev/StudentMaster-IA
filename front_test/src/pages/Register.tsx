@@ -18,7 +18,7 @@ export const Register = () => {
     const [isLoading, setLoading] = useState<boolean>(false);
 
     const {toast} = useToast();
-    const {navigate} = useNavigate();
+    const navigate = useNavigate();
 
     const handleRegister = async (event: FormEvent) => {
         event.preventDefault();

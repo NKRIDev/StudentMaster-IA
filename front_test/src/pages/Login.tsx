@@ -4,8 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import { ArrowLeft, ArrowRight, Loader, Lock, Mail } from "lucide-react";
 import { FormEvent, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthCard } from "./auths/AuthCard";
+import { loginUser } from "@/services/authService";
+import { useToast } from "@/hooks/use-toast";
 
 export const Login = () => {
     const [email, setEmail] = useState<string>("");
@@ -13,10 +15,37 @@ export const Login = () => {
 
     const [isLoading, setLoading] = useState<boolean>(false);
 
-    const handleLogin = (event: FormEvent) => {
+    const { toast } = useToast();
+    const navigate = useNavigate();
+
+    const handleLogin = async (event: FormEvent) => {
         event.preventDefault();
         setLoading(true);
-        alert(email + "" + password);
+
+        /*
+        Send login data to server
+        */
+        const result = await loginUser({
+            email, password
+        });
+        
+        if(result.error){
+            toast({
+                title: "Erreur",
+                description: result.error,
+                variant: "destructive"
+            });
+        }
+        else{
+            toast({
+                title: "Succès",
+                description: result.message,
+                variant: "success"
+            });
+        
+            navigate("/dashboard");
+        }
+        setLoading(false);
     };
 
     return(
