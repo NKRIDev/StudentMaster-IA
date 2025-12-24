@@ -1,9 +1,14 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { useAuth } from "@/contexts/AuthContext";
 import { ArrowRight, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
     const navigate = useNavigate();
+
+    const {user} = useAuth();
+
+    console.log("Current user :", user);
 
     return(
         <div className="p-8 max-w-7xl mx-auto">

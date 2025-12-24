@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthCard } from "./auths/AuthCard";
 import { loginUser } from "@/services/authService";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const Login = () => {
     const [email, setEmail] = useState<string>("");
@@ -17,6 +18,8 @@ export const Login = () => {
 
     const { toast } = useToast();
     const navigate = useNavigate();
+
+    const {changeUser} = useAuth();
 
     const handleLogin = async (event: FormEvent) => {
         event.preventDefault();
@@ -44,6 +47,7 @@ export const Login = () => {
             });
         
             navigate("/dashboard");
+            changeUser(result.user!);
         }
         setLoading(false);
     };

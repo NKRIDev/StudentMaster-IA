@@ -12,67 +12,73 @@ import { Toaster } from "./components/ui/toaster";
 import { DocumentBoard } from "./pages/DocumentDashoard";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
+import { AuthProvider } from "./contexts/AuthContext";
 
 export default function App() {
   return (
     <>
-      <Router>
-        <Routes>
-          {/*Login route */}
-          <Route path="/login" element={<Login/>}/>
-          <Route path="/register" element={<Register/>}/>
-          
-          {/*Private Dashboard */}
-          <Route element={
-            <DefaultLayout>
-              <DocumentProvider>
-                <Outlet/>
-              </DocumentProvider>
-            </DefaultLayout>
-          }
-          >
-            
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/upload" element={<Upload />} />
-            
-            {/*Document features */}
-            <Route path="/document" element={
-              <DocRedirection>
-                <DocumentBoard/>
-              </DocRedirection>
-            } />
-            
-            <Route path="/document/summary" element={
-              <DocRedirection>
-                <Summary/>
-              </DocRedirection>
-            } />
-            
-            <Route path="/document/revision" element={
-              <DocRedirection>
-                <Revision/>
-              </DocRedirection>
-            } />
-            
-            <Route path="/document/flashcards" element={
-              <DocRedirection>
-                <Flashcards/>
-              </DocRedirection>
-            } />
-            
-            <Route path="/document/quiz" element={
-              <DocRedirection>
-                <Quiz/>
-              </DocRedirection>
-            } />
-            
-            </Route>
-            
-            {/*Route not found */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Router>
-      <Toaster/>
+      <AuthProvider>
+        <Router>
+          <Routes>
+
+              {/*Login route */}
+              <Route path="/login" element={<Login/>}/>
+              <Route path="/register" element={<Register/>}/>
+              
+              {/*Private Dashboard */}
+              <Route element={
+                <DefaultLayout>
+                  <DocumentProvider>
+                    <Outlet/>
+                  </DocumentProvider>
+                </DefaultLayout>
+              }
+              >
+                
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/upload" element={<Upload />} />
+                
+                {/*Document features */}
+                <Route path="/document" element={
+                  <DocRedirection>
+                    <DocumentBoard/>
+                  </DocRedirection>
+                } />
+                
+                <Route path="/document/summary" element={
+                  <DocRedirection>
+                    <Summary/>
+                  </DocRedirection>
+                } />
+                
+                <Route path="/document/revision" element={
+                  <DocRedirection>
+                    <Revision/>
+                  </DocRedirection>
+                } />
+                
+                <Route path="/document/flashcards" element={
+                  <DocRedirection>
+                    <Flashcards/>
+                  </DocRedirection>
+                } />
+                
+                <Route path="/document/quiz" element={
+                  <DocRedirection>
+                    <Quiz/>
+                  </DocRedirection>
+                } />
+                
+                </Route>
+                
+                {/*Route not found */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+
+          </Routes>
+        </Router>
+
+        <Toaster/>
+      </AuthProvider>
     </>
   );
 }
