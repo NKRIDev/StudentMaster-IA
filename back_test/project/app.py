@@ -2,7 +2,8 @@
 #pip install python-dotenv
 
 from flask import Blueprint
-from flask_login import login_required, current_user
+
+from project.models import User
 from . import db
 
 # Importing flask library
@@ -10,6 +11,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 import io
+
+# JWT token
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 # Setting up the Ollama library for AI
 from ollama import chat
@@ -409,14 +413,17 @@ def index():
     return "Index"
 
 # Profile page
-@main.route("/profile", methods=["GET"])
-@login_required
+@main.route("/api/profile", methods=["GET"])
+@jwt_required()
 def profile():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
     return jsonify({
         "user": {
-            "id": current_user.id,
-            "email": current_user.email,
-            "pseudo": current_user.pseudo
+            "id": user.id,
+            "email": user.email,
+            "pseudo": user.pseudo
         }
     })
 

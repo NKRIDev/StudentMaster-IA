@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Label } from "@radix-ui/react-label";
 import { ArrowLeft, ArrowRight, Loader, Lock, Mail, User } from "lucide-react";
 import { FormEvent, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthCard } from "./auths/AuthCard";
 import { registerUser } from "@/services/authService";
 
@@ -18,6 +18,7 @@ export const Register = () => {
     const [isLoading, setLoading] = useState<boolean>(false);
 
     const {toast} = useToast();
+    const {navigate} = useNavigate();
 
     const handleRegister = async (event: FormEvent) => {
         event.preventDefault();
@@ -57,6 +58,8 @@ export const Register = () => {
                 description: result.message,
                 variant: "success"
             });
+
+            navigate("/login");
         }
 
         setLoading(false);

@@ -88,7 +88,7 @@ ollama run llama3.1:8b "Hello"
 ``` bash
 python3 -m venv venv
 source venv/bin/active
-pip install flask flask-cors requests PyPDF2 python-docx python-pptx ollama python-dotenv flask-sqlalchemy flask-login
+pip install flask flask-cors requests PyPDF2 python-docx python-pptx ollama python-dotenv flask-sqlalchemy flask-jwt-extended
 export FLASK_APP=project
 export FLASH_DEBUG=1
 flask run
@@ -96,8 +96,13 @@ flask run
 Make sure you have a `.env` file with:
 ```
 OLLAMA_API_URL="http://IP:PORT/api/generate"
-FLASK_HOST="myhost"
 FLASK_PORT=my_port
+FLASK_HOST="my_host"
+FLASK_SECRET_KEY=secret-flask-key
+JWT_SECRET_KEY=secret-jwt-key
+DATABASE_URL=databse_url
+JWT_ACCESS_TOKEN_EXPIRES=500
+
 ```
 ### **Frontend**
 ``` bash

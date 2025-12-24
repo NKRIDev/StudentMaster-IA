@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_login import login_user, logout_user, login_required
+from flask_jwt_extended import create_access_token
 from flask_cors import cross_origin
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
@@ -21,11 +21,12 @@ def login():
     if not user or not check_password_hash(user.password, password):
         return jsonify({"error" : "Veuillez vérifier vos identifiants de connexion et réessayer."}), 401 
 
-    # if the above check passes, then we know the user has the right credentials
-    login_user(user, remember=True)
+    #Create JWT token for this session
+    token = create_access_token(identity=user.id)
 
     return jsonify({
         "message": "Authentification réussite",
+        "token": token,
         "user": {
             "id": user.id,
             "email": user.email,
@@ -76,14 +77,4 @@ def register():
             "email": new_user.email,
             "pseudo": new_user.pseudo
         }
-    }), 201
-
-# Logout route
-@auth.route('/api/auth/logout')
-@login_required
-def logout():
-    logout_user()
-
-    return jsonify({
-        "message": "Utilisateur déconnecté"
     }), 201
