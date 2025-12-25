@@ -13,6 +13,7 @@ import { DocumentBoard } from "./pages/DocumentDashoard";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
 import { AuthProvider } from "./contexts/AuthContext";
+import { AuthProtected } from "./components/AuthProtected";
 
 export default function App() {
   return (
@@ -27,11 +28,13 @@ export default function App() {
               
               {/*Private Dashboard */}
               <Route element={
-                <DefaultLayout>
-                  <DocumentProvider>
-                    <Outlet/>
-                  </DocumentProvider>
-                </DefaultLayout>
+                <AuthProtected>
+                  <DefaultLayout>
+                    <DocumentProvider>
+                      <Outlet/>
+                    </DocumentProvider>
+                  </DefaultLayout>
+                </AuthProtected>
               }
               >
                 
