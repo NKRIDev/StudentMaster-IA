@@ -46,9 +46,9 @@ export const Login = () => {
                 description: result.message,
                 variant: "success"
             });
-        
-            navigate("/dashboard");
+            
             login(result.token!, result.user!);
+            navigate("/dashboard");
         }
         setLoading(false);
     };

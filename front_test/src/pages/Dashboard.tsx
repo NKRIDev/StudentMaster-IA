@@ -1,15 +1,23 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
+import { getProfile } from "@/services/profileService";
 import { ArrowRight, Upload } from "lucide-react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
     const navigate = useNavigate();
 
-    const {user, token} = useAuth();
+    const {user} = useAuth();
 
-    console.log("Current user :", user);
-    console.log("Current token :", token);
+    useEffect(() => {
+        const fetchProfile = async () => {
+            const result = await getProfile();
+            console.log(result);
+        };
+
+        fetchProfile();
+    }, []);
 
     return(
         <div className="p-8 max-w-7xl mx-auto">
