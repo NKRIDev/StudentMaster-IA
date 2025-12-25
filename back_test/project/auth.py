@@ -22,7 +22,7 @@ def login():
         return jsonify({"error" : "Veuillez vérifier vos identifiants de connexion et réessayer."}), 401 
 
     #Create JWT token for this session
-    token = create_access_token(identity=user.id)
+    token = create_access_token(identity=str(user.id))
 
     return jsonify({
         "message": "Authentification réussite",
